@@ -51,11 +51,13 @@ Both results extend to any depth $`K`$: `0:1` remains sublinear, while `0:K−1`
     <td align="center"><img src="assets/rl_arm_push_hard.png" width="215" /></td>
   </tr>
   <tr>
-    <td align="center"><sub><b>LLaMA-1B</b>, validation PPL<br>dashed: FullPT (blue), GaLore (orange)<br>solid: + ANCRe (green, red)</sub></td>
+    <td align="center"><sub><b>LLaMA-1B</b>, validation PPL</sub></td>
     <td align="center"><sub><b>DiT</b>, FID-50K on ImageNet 256×256</sub></td>
-    <td align="center"><sub><b>Arm Push Hard</b>, time at goal<br>dashed: ResNet-16 (blue), ResNet-64 (orange)<br>solid: + ANCRe (green, red)</sub></td>
+    <td align="center"><sub><b>Arm Push Hard</b>, time at goal</sub></td>
   </tr>
 </table>
+
+<p align="center"><sub>Dashed lines are baselines and solid lines are with ANCRe (blue → green, orange → red).<br>LLaMA-1B: FullPT (blue), GaLore (orange). Arm Push Hard: ResNet-16 (blue), ResNet-64 (orange).</sub></p>
 
 ## Installation
 
