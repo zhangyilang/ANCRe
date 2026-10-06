@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.venv/
+uv.lock
+
+# Editors
+.vscode/
+.idea/
+
+# Cluster job scripts and logs
+sbatch/
+slurm_logs/
+*.out
+*.err
+
+# Experiment outputs
+wandb/
+checkpoints/
+checkpoints/
+results/
+samples/
+reference_batch/
+pretrained_models/
+runs/
+paper/
+*.pt
+*.pth
+*.safetensors
+*.npz
+*.pkl

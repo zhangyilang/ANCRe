@@ -1,0 +1,8 @@
+torchrun --standalone --nproc_per_node 2 train.py \
+    --num-workers 2 \
+    --image-size 256 \
+    --model DiT-S/2 \
+    --bf16 \
+    --wandb-name ANCRe \
+    --use-ancre \
+    --ancre-softmax-temp 1e-2
