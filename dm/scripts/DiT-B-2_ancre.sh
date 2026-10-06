@@ -5,4 +5,4 @@ torchrun --standalone --nproc_per_node 2 train.py \
     --bf16 \
     --wandb-name ANCRe \
     --use-ancre \
-    --ancre-softmax-temp 1e-2
+    --ancre-softmax-temp 1e-1

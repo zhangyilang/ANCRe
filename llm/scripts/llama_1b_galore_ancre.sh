@@ -1,4 +1,4 @@
-# LLaMA-1B, 8 A100, 1 Node
+# LLaMA-1B, 2 A100, 1 Node
 torchrun --standalone --nproc_per_node 2 torchrun_main.py \
     --model_config configs/llama_1b.json \
     --lr 5e-3 \

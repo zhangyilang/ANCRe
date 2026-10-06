@@ -1,5 +1,4 @@
-# Adapted from GaLore (https://github.com/jiaweizzhao/GaLore, Apache-2.0).
-# Modified by the ANCRe authors to integrate ANCRe.
+# Modified from GaLore (https://github.com/jiaweizzhao/GaLore) for ANCRe.
 
 import os
 import time

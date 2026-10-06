@@ -1,13 +1,8 @@
-uv run train.py \
-    --env_id "ant_big_maze" \
-    --eval_env_id "ant_big_maze_eval" \
-    --critic_depth 64 \
-    --actor_depth 64 \
+# Ant Big Maze: ResNet-16 and ResNet-64, without and with ANCRe. Run from rl/.
+declare -A TEMP=([16]=1e-2 [64]=1e-2)
 
-uv run train.py \
-    --env_id "ant_big_maze" \
-    --eval_env_id "ant_big_maze_eval" \
-    --critic_depth 64 \
-    --actor_depth 64 \
-    --use_ancre \
-    --ancre_softmax_temp 1e-2
+for DEPTH in 16 64; do
+    uv run train.py --env_id ant_big_maze --eval_env_id ant_big_maze_eval --critic_depth $DEPTH --actor_depth $DEPTH
+    uv run train.py --env_id ant_big_maze --eval_env_id ant_big_maze_eval --critic_depth $DEPTH --actor_depth $DEPTH \
+        --use_ancre --ancre_softmax_temp ${TEMP[$DEPTH]}
+done

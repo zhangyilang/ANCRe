@@ -3,6 +3,7 @@
 
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
+# Modified for ANCRe (https://github.com/zhangyilang/ANCRe).
 
 """
 Sample new images from a pre-trained DiT.
@@ -13,6 +14,7 @@ from diffusion import create_diffusion
 from diffusers.models import AutoencoderKL
 from download import find_model
 from models import DiT_models
+from ancre import ANCReConfig, get_DiT_depth
 import argparse
 
 
@@ -33,9 +35,18 @@ def main(args):
 
     # Load model:
     latent_size = args.image_size // 8
+    if args.use_ancre:
+        ancre_config = ANCReConfig(
+            num_layers=get_DiT_depth(args.model),
+            parameterization=args.ancre_parameterization,
+            softmax_temp=args.ancre_softmax_temp
+        )
+    else:
+        ancre_config = None
     model = DiT_models[args.model](
         input_size=latent_size,
-        num_classes=args.num_classes
+        num_classes=args.num_classes,
+        ancre_config=ancre_config
     ).to(device)
     # Auto-download a pre-trained model or load a custom DiT checkpoint from train.py:
     ckpt_path = args.ckpt or f"DiT-XL-2-{args.image_size}x{args.image_size}.pt"
@@ -81,5 +92,9 @@ if __name__ == "__main__":
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--ckpt", type=str, default=None,
                         help="Optional path to a DiT checkpoint (default: auto-download a pre-trained DiT-XL/2 model).")
+    parser.add_argument("--use-ancre", action="store_true", help="Whether to use learnable ancre connections.")
+    parser.add_argument("--ancre-parameterization", type=str, default="Softmax", choices=["Softmax", "Hadamard", "Constant"],
+                        help="How to parameterize the ancre coefficients")
+    parser.add_argument("--ancre-softmax-temp" , type=float, default=1e-2, help="Softmax temperature for ancre coefficients")
     args = parser.parse_args()
     main(args)

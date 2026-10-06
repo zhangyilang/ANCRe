@@ -17,7 +17,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# Modified by the ANCRe authors to integrate ANCRe.
+# Modified for ANCRe (https://github.com/zhangyilang/ANCRe).
 """ PyTorch LLaMA model."""
 from typing import List, Optional, Tuple, Union
 

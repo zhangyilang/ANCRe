@@ -1,14 +1,15 @@
-# ANCRe: Adaptive Neural Connection Reassignment for Efficient Depth Scaling
+# [NeurIPS 2026] ANCRe
 
 [![arXiv](https://img.shields.io/badge/arXiv-2602.09009-b31b1b.svg)](https://arxiv.org/abs/2602.09009)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-This repository contains the official implementation of **ANCRe**, together with code to reproduce the experiments on LLM pre-training, diffusion models, and deep reinforcement learning.
+This repository contains the official implementation of the NeurIPS 2026 paper [ANCRe: Adaptive Neural Connection Reassignment for Efficient Depth Scaling](https://arxiv.org/abs/2602.09009), together with code to reproduce the experiments on pre-training of LLMs, diffusion models, and deep RL.
 
 ## Overview
 
-Going deeper is a key driver of modern foundation models, yet deep layers are often underutilized. For example, dropping a late layer of Llama 3.1 70B changes its outputs far less than dropping an early one. We revisit the default tool for going deep, residual connections, and ask: *where should the shortcuts go?*
+Going deeper is a key driver of modern foundation models, yet deep layers are often underutilized. For example, dropping a late layer of Llama 3.1 70B changes its outputs far less than dropping an early one. We revisit the default tool for depth scaling, namely residual connections, and ask: *where should the shortcuts go?* As a motivating case study, we investigate a linear network to isolate the role of residual topology from multiple interacting components of medern architectures. 
 
-**Topology matters.** In deep linear networks, the placement of shortcuts alone determines how fast training converges. Here `i:j` is a shortcut from the output of layer `i` to that of layer `j`, with `0` the input. With 3 layers (left), a single `0:2` shortcut converges far faster than `0:1` or the standard cascaded layout. With 4 layers (right), the best layout becomes `0:2+2:3`, and extra shortcuts help only when they are well placed.
+**Observation: topology matters.** In deep linear networks, the placement of shortcuts alone determines how fast training converges. Here `i:j` is a shortcut from the output of layer `i` to layer `j`, with denoting `0` the input. For 3 layers (left), a single `0:2` shortcut converges far faster than `0:1` or the standard cascaded layout. With 4 layers (right), the best layout becomes `0:2+2:3`, and extra shortcuts help only when they are properly placed.
 
 <p align="center">
   <img src="assets/lnn_3layers.png" width="45%" />
@@ -25,7 +26,7 @@ $$\mathcal{L}_{0:1} = \frac{1}{2}\big\Vert W_3 W_2 (W_1 + I) X - Y \big\Vert_F^2
 
 Both results extend to any depth $K$: `0:1` remains sublinear, while `0:K−1` guarantees linear convergence.
 
-**So learn it.** The best topology depends on depth and architecture, so ANCRe learns it instead of fixing it by hand. It considers every shortcut `i:j` and learns a softmax-normalized coefficient `p_ij` for each one, jointly with the model weights. On the linear networks above, it converges linearly like the best fixed topology, without being told which one that is. It adds only K(K+1)/2 scalars and less than 1% overhead.
+**So: learn it.** The best topology depends on depth and model architecture, so ANCRe learns it instead of fixing it by hand. It considers every shortcut `i:j` and learns a softmax-normalized coefficient `p_ij` for each one, jointly with the model weights. On the linear networks above, it converges linearly like the best fixed topology, without being told which one that is. It adds only K(K+1)/2 scalars and less than 1% overhead.
 
 <p align="center">
   <img src="assets/ancre.png" width="35%" />
@@ -52,9 +53,10 @@ Both results extend to any depth $K$: `0:1` remains sublinear, while `0:K−1` g
 ## Installation
 
 ```bash
-git clone <this-repo> && cd ancre
+git clone https://github.com/zhangyilang/ANCRe.git && cd ANCRe
 conda create -n ancre python=3.12 -y && conda activate ancre
-pip install -r requirements.txt
+pip install -e ".[experiments]"   # ANCRe + pinned dependencies for the experiments
+# pip install -e .                 # ANCRe module only
 ```
 
 The RL experiments use JAX and a separate environment; see [rl/README.md](rl/README.md).
@@ -107,7 +109,7 @@ Scripts for 60M / 130M / 350M / 1B are in [`llm/scripts/`](llm/scripts/).
 cd dm
 bash scripts/DiT-S-2_ancre.sh
 # evaluate all checkpoints of a run (results/<NNN>-DiT-S-2 is created by train.py)
-bash scripts/sample_ddp.sh results/000-DiT-S-2 DiT-S/2 --use-ancre --ancre-softmax-temp 1e-2
+bash scripts/sample_ddp.sh results/000-DiT-S-2 DiT-S/2 --use-ancre --ancre-softmax-temp 1e-1
 ```
 
 ImageNet-1K is loaded from the gated HuggingFace dataset [`ILSVRC/imagenet-1k`](https://huggingface.co/datasets/ILSVRC/imagenet-1k), so run `huggingface-cli login` first. Evaluation follows [ADM](https://github.com/openai/guided-diffusion/tree/main/evaluations) and requires the reference batch [`VIRTUAL_imagenet256_labeled.npz`](https://openaipublic.blob.core.windows.net/diffusion/jul-2021/ref_batches/imagenet/256/VIRTUAL_imagenet256_labeled.npz) in `dm/reference_batch/`.
@@ -132,9 +134,9 @@ Scripts for Humanoid, Ant Big Maze, Arm Push Hard and Arm Binpick Hard are in [`
 ## Acknowledgement
 
 We thank the authors of the following projects for releasing their code:
-- [GaLore](https://github.com/jiaweizzhao/GaLore) for LLM pre-training (`llm/`).
+- [GaLore](https://github.com/jiaweizzhao/GaLore) (Apache-2.0) for LLM pre-training (`llm/`).
 - [DiT](https://github.com/facebookresearch/DiT) for diffusion models (`dm/`). This part stays under DiT's [CC BY-NC 4.0](dm/LICENSE) license.
-- [scaling-crl](https://github.com/wang-kevin3290/scaling-crl) for deep RL (`rl/`).
+- [scaling-crl](https://github.com/wang-kevin3290/scaling-crl) (Apache-2.0) for deep RL (`rl/`).
 
 ## Citation
 
@@ -143,6 +145,7 @@ We thank the authors of the following projects for releasing their code:
   title     = {{ANCRe}: Adaptive Neural Connection Reassignment for Efficient Depth Scaling},
   author    = {Zhang, Yilang and Li, Bingcong and He, Niao and Giannakis, Georgios B.},
   booktitle = {Advances in Neural Information Processing Systems},
+  volume = {39},
   year      = {2026}
 }
 ```
