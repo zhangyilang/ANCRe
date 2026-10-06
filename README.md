@@ -5,11 +5,16 @@
 
 This repository contains the official implementation of the NeurIPS 2026 paper [ANCRe: Adaptive Neural Connection Reassignment for Efficient Depth Scaling](https://arxiv.org/abs/2602.09009), together with code to reproduce the experiments on pre-training of LLMs, diffusion models, and deep RL.
 
+## TODO
+
+- [x] Code for reproducing the experiments in the paper (LLMs, DiTs, and deep RL)
+- [ ] Efficient pipeline-parallel implementation based on [Megatron-LM](https://github.com/NVIDIA/Megatron-LM), building on the discussion in Appendix D of the paper. Coming soon!
+
 ## Overview
 
-Going deeper is a key driver of modern foundation models, yet deep layers are often underutilized. For example, dropping a late layer of Llama 3.1 70B changes its outputs far less than dropping an early one. We revisit the default tool for depth scaling, namely residual connections, and ask: *where should the shortcuts go?* As a motivating case study, we investigate a linear network to isolate the role of residual topology from multiple interacting components of medern architectures. 
+Going deeper is a key driver of modern foundation models, yet deep layers are often underutilized. For example, dropping a late layer of Llama 3.1 70B changes its outputs far less than dropping an early one. We revisit the default tool for depth scaling, namely residual connections, and ask: *where should the shortcuts go?* As a motivating case study, we investigate a linear network to isolate the role of residual topology from multiple interacting components of modern architectures. 
 
-**Observation: topology matters.** In deep linear networks, the placement of shortcuts alone determines how fast training converges. Here `i:j` is a shortcut from the output of layer `i` to layer `j`, with denoting `0` the input. For 3 layers (left), a single `0:2` shortcut converges far faster than `0:1` or the standard cascaded layout. With 4 layers (right), the best layout becomes `0:2+2:3`, and extra shortcuts help only when they are properly placed.
+**Observation: topology matters.** In deep linear networks, the placement of shortcuts alone determines how fast training converges. Here `i:j` is a shortcut from the output of layer `i` to layer `j`, with `0` denoting the input. For 3 layers (left), a single `0:2` shortcut converges far faster than `0:1` or the standard cascaded layout. With 4 layers (right), the best layout becomes `0:2+2:3`, and extra shortcuts help only when they are properly placed.
 
 <p align="center">
   <img src="assets/lnn_3layers.png" width="45%" />
