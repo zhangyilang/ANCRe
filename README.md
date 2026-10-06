@@ -22,14 +22,16 @@ Going deeper is a key driver of modern foundation models, yet deep layers are of
   <img src="assets/lnn_4layers.png" width="45%" />
 </p>
 
-**Theory: an exponential gap.** Consider a 3-layer linear network trained by gradient flow on whitened inputs ($XX^\top = I$), with a single shortcut `0:1` or `0:2`:
+**Theory: an exponential gap.** Consider a 3-layer linear network trained by gradient flow on whitened inputs ($`XX^\top = I`$), with a single shortcut `0:1` or `0:2`:
 
-$$\mathcal{L}_{0:1} = \frac{1}{2}\big\Vert W_3 W_2 (W_1 + I) X - Y \big\Vert_F^2, \qquad \mathcal{L}_{0:2} = \frac{1}{2}\big\Vert W_3 (W_2 W_1 + I) X - Y \big\Vert_F^2 .$$
+```math
+\mathcal{L}_{0:1} = \frac{1}{2}\big\Vert W_3 W_2 (W_1 + I) X - Y \big\Vert_F^2, \qquad \mathcal{L}_{0:2} = \frac{1}{2}\big\Vert W_3 (W_2 W_1 + I) X - Y \big\Vert_F^2 .
+```
 
-- **`0:1` is slow (Theorem 3.2).** There *exists* a sufficiently small initialization under which convergence is at best sublinear: $\mathcal{L}_{0:1}(t) \ge \Omega(1/t^2)$.
-- **`0:2` is fast (Theorem 3.3).** Under *any* sufficiently small initialization, convergence is linear: $\mathcal{L}_{0:2}(t) \le \mathcal{L}_{0:2}(0)\, e^{-2(1-\lambda)^2 t}$, where $\lambda \in (0,1)$ depends on the initialization.
+- **`0:1` is slow (Theorem 3.2).** There *exists* a sufficiently small initialization under which convergence is at best sublinear: $`\mathcal{L}_{0:1}(t) \ge \Omega(1/t^2)`$.
+- **`0:2` is fast (Theorem 3.3).** Under *any* sufficiently small initialization, convergence is linear: $`\mathcal{L}_{0:2}(t) \le \mathcal{L}_{0:2}(0)\, e^{-2(1-\lambda)^2 t}`$, where $`\lambda \in (0,1)`$ depends on the initialization.
 
-Both results extend to any depth $K$: `0:1` remains sublinear, while `0:K−1` guarantees linear convergence.
+Both results extend to any depth $`K`$: `0:1` remains sublinear, while `0:K−1` guarantees linear convergence.
 
 **So: learn it.** The best topology depends on depth and model architecture, so ANCRe learns it instead of fixing it by hand. It considers every shortcut `i:j` and learns a softmax-normalized coefficient `p_ij` for each one, jointly with the model weights. On the linear networks above, it converges linearly like the best fixed topology, without being told which one that is. It adds only K(K+1)/2 scalars and less than 1% overhead.
 
